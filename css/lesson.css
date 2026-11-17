@@ -77,6 +77,8 @@ svg { display: block; }
 .w.g { background-image: linear-gradient(var(--t), var(--t)); background-size: 100% .07em; background-repeat: no-repeat; background-position: 0 92%; }
 .s-head .w.g { background-image: none; }
 .w:hover, .w.act { background-color: var(--mark); }
+.slide { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.w.sel { background-color: #FFD66B; border-radius: 0; box-shadow: .12em 0 0 #FFD66B, -.12em 0 0 #FFD66B; }
 ::selection { background: #FFD66B; color: var(--ink); }
 .m .katex { font-size: 1.04em; }
 
@@ -196,7 +198,9 @@ svg { display: block; }
 }
 
 /* ---------- selection button ---------- */
-.selbtn { position: fixed; z-index: 26; border: 0; border-radius: 999px; background: var(--ink); color: #fff; padding: 10px 16px; font-size: 14px; font-weight: 700; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); }
+.selbtn { position: fixed; z-index: 26; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); border: 0; border-radius: 999px;
+  background: #FFD66B; color: #1A1306; padding: 13px 22px; font-size: 16px; font-weight: 700; white-space: nowrap; box-shadow: 0 10px 30px rgba(0, 0, 0, .45); }
+@media (prefers-reduced-motion: no-preference) { .selbtn:not([hidden]) { animation: rise2 .25s both; } @keyframes rise2 { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } } }
 
 /* ---------- sheet ---------- */
 .scrim { position: fixed; inset: 0; z-index: 30; background: rgba(5, 8, 18, .45); }

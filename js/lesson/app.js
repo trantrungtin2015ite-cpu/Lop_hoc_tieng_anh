@@ -185,7 +185,7 @@ function update() {
   $$("#dots button").forEach((b, i) => b.classList.toggle("on", i === cur));
   $("#prev").disabled = cur === 0; $("#next").disabled = cur === N - 1;
   if (LESSON.slides[cur].kind === "summary") renderMyStats();
-  hideSel();
+  clearSel();
 }
 function toggleOverview() {
   overview = !overview; root.classList.toggle("ov", overview);
@@ -249,38 +249,48 @@ async function showWord(el) {
   stats.lookup(m.key, word, m.vi);
 }
 
-/* ---------- translate a dragged selection ---------- */
-let selText = "", selPair = null;
-function cleanSelection(sel) {
-  const frag = sel.getRangeAt(0).cloneContents();
+/* ---------- translate a dragged selection ----------
+   The app does its own selection (hold a word, then drag across words) so the phone's
+   copy menu and its built-in translator never open over the lesson. */
+let selWords = [], selEn = null;
+function wordsOf(en) { return $$(".w", en); }
+function markRange(a, b) {
+  const arr = wordsOf(selEn), i = arr.indexOf(a), j = arr.indexOf(b);
+  if (i < 0 || j < 0) return;
+  const lo = Math.min(i, j), hi = Math.max(i, j);
+  $$(".w.sel").forEach((w) => w.classList.remove("sel"));
+  selWords = arr.slice(lo, hi + 1);
+  selWords.forEach((w) => w.classList.add("sel"));
+}
+function clearSel() { $$(".w.sel").forEach((w) => w.classList.remove("sel")); selWords = []; selEn = null; hideSel(); }
+function selectionText() {
+  const r = document.createRange();
+  r.setStartBefore(selWords[0]); r.setEndAfter(selWords[selWords.length - 1]);
+  const frag = r.cloneContents();
   frag.querySelectorAll(".katex-mathml").forEach((n) => n.remove());
   return frag.textContent.replace(/\s+/g, " ").trim();
 }
-function checkSelection() {
-  const sel = window.getSelection();
-  if (!sel || sel.isCollapsed || !sel.rangeCount) { hideSel(); return; }
-  const node = sel.anchorNode && (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement);
-  if (!node || !node.closest(".slide .en")) { hideSel(); return; }
-  const text = cleanSelection(sel);
-  if (text.length < 2 || !/[A-Za-z]/.test(text)) { hideSel(); return; }
-  selText = text; selPair = pairOf(node);
-  const r = sel.getRangeAt(0).getBoundingClientRect(), b = $("#selBtn");
+function showSelBtn() {
+  // Fixed just above the bottom bar, so it never covers the lesson text.
+  const b = $("#selBtn");
+  b.textContent = "Dịch đoạn này (" + selWords.length + " từ)";
   b.hidden = false;
-  const bw = b.offsetWidth || 150;
-  b.style.left = Math.min(window.innerWidth - bw - 10, Math.max(10, r.left + r.width / 2 - bw / 2)) + "px";
-  b.style.top = (r.top > 120 ? r.top - 54 : r.bottom + 12) + "px";
 }
 function hideSel() { const b = $("#selBtn"); if (b) b.hidden = true; }
 async function showSelection() {
-  const text = selText, pair = selPair, anchor = $("#selBtn");
+  if (!selWords.length) return;
+  const text = selectionText(), pair = pairOf(selWords[0]), anchor = $("#selBtn");
+  const coverage = selWords.length / Math.max(1, wordsOf(selEn).length);
   const uniq = LESSON.glossary.filter((g) => (g.forms || [g.en]).concat([g.en]).some((f) =>
     new RegExp("(^|[^A-Za-z])" + f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "([^A-Za-z]|$)", "i").test(text)));
+  const useLesson = pair && coverage >= 0.7;
   openSheet('<div class="wd"><span class="lbl">Đoạn đã chọn</span><div class="wd-top"><span class="sel-en">' + esc(text) + '</span><button type="button" class="spk" id="selSpk" aria-label="Nghe">' + I.speak + "</button></div>" +
-    '<p class="wd-vi" id="selVi">Đang dịch…</p>' +
+    (useLesson ? '<p class="wd-vi">' + pair.vi.innerHTML + '<span class="src">Bản tiếng Việt đã duyệt trong bài</span></p>' : '<p class="wd-vi" id="selVi">Đang dịch…</p>') +
     (uniq.length ? '<div class="terms"><span class="lbl">Thuật ngữ trong đoạn</span>' + uniq.map((g) => "<span><b>" + esc(g.en) + "</b> " + esc(g.vi) + "</span>").join("") + "</div>" : "") +
-    (pair ? wholeSentenceHTML(pair) : "") + "</div>", anchor);
-  window.getSelection().removeAllRanges(); hideSel();
+    (pair && !useLesson ? wholeSentenceHTML(pair) : "") + "</div>", anchor);
+  clearSel();
   $("#selSpk").onclick = () => speakEn(text);
+  if (useLesson) { stats.lookup(text.toLowerCase(), text, pair.vi.textContent.trim()); return; }
   const g = glossFor(text);
   const m = g ? { vi: g.vi, source: "gloss" } : await meaningOf(text);
   const box = $("#selVi"); if (!box) return;
@@ -367,20 +377,55 @@ function renderMyStats() {
   fitSlides();
 }
 
-/* ---------- gestures ---------- */
+/* ---------- gestures ----------
+   Quick tap on a word: its meaning. Hold a word (or drag with a mouse) then move: select words.
+   Quick horizontal swipe anywhere else: next or previous slide. */
+let suppressClick = false;
 function bindGestures() {
   const stage = $("#stage");
-  let sx = 0, sy = 0, st = 0, track = false;
+  let sx = 0, sy = 0, st = 0, track = false, downW = null, holding = false, holdT = null;
   stage.addEventListener("pointerdown", (e) => {
-    track = e.isPrimary && !e.target.closest(".board,.opt,.spk,button,textarea");
+    if (!e.isPrimary || overview) return;
     sx = e.clientX; sy = e.clientY; st = Date.now();
+    track = !e.target.closest(".board,.opt,.spk,button,textarea");
+    downW = e.target.closest(".slide .w");
+    holding = false; clearTimeout(holdT);
+    if (selWords.length && !e.target.closest(".w.sel")) clearSel();
+    if (downW) {
+      holdT = setTimeout(() => {
+        holding = true; selEn = downW.closest(".en"); markRange(downW, downW);
+        try { navigator.vibrate && navigator.vibrate(12); } catch (x) {}
+      }, 320);
+    }
   });
-  stage.addEventListener("pointerup", (e) => {
+  stage.addEventListener("pointermove", (e) => {
+    if (!downW) return;
+    const moved = Math.hypot(e.clientX - sx, e.clientY - sy);
+    if (!holding) {
+      if (e.pointerType === "mouse" && moved > 6) { holding = true; clearTimeout(holdT); selEn = downW.closest(".en"); markRange(downW, downW); }
+      else if (moved > 10) { clearTimeout(holdT); downW = null; return; }
+      else return;
+    }
+    track = false;
+    const el = document.elementFromPoint(e.clientX, e.clientY), w2 = el && el.closest(".w");
+    if (w2 && w2.closest(".en") === selEn) markRange(downW, w2);
+  });
+  const end = (e) => {
+    clearTimeout(holdT);
+    if (holding && downW) {
+      suppressClick = true; setTimeout(() => { suppressClick = false; }, 400);
+      if (selWords.length > 1) showSelBtn();
+      else { const w = downW; clearSel(); showWord(w); }
+      holding = false; downW = null; return;
+    }
+    downW = null;
     if (!track) return; track = false;
-    const dx = e.clientX - sx, dy = e.clientY - sy, sel = window.getSelection();
-    if (sel && !sel.isCollapsed) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4 && Date.now() - st < 700) go(cur + (dx < 0 ? 1 : -1));
-  });
+  };
+  stage.addEventListener("pointerup", end);
+  stage.addEventListener("pointercancel", () => { clearTimeout(holdT); holding = false; downW = null; track = false; });
+  stage.addEventListener("contextmenu", (e) => { if (e.target.closest(".slide")) e.preventDefault(); });
 }
 
 /* ---------- start ---------- */
@@ -402,18 +447,15 @@ function start() {
   $("#trBtn").onclick = showTranslate;
   $("#scrim").onclick = closeSheet;
   $("#selBtn").onclick = showSelection;
-  $("#selBtn").addEventListener("pointerdown", (e) => e.preventDefault());
   if ($("#inviteBtn")) $("#inviteBtn").onclick = showInvite;
   $("#ovBtn").onclick = toggleOverview;
   $$(".slide").forEach((el, i) => el.addEventListener("click", (e) => { if (overview) { e.stopPropagation(); e.preventDefault(); go(i, "glide"); } }, true));
 
   document.addEventListener("click", (e) => {
-    const w = e.target.closest(".w"); if (!w || overview) return;
-    const sel = window.getSelection(); if (sel && !sel.isCollapsed) return;
+    const w = e.target.closest(".slide .w"); if (!w || overview || suppressClick) return;
+    if (selWords.length) { clearSel(); return; }
     e.stopPropagation(); showWord(w);
   });
-  let st = null;
-  document.addEventListener("selectionchange", () => { clearTimeout(st); st = setTimeout(checkSelection, 250); });
   document.addEventListener("keydown", (e) => {
     if (e.target.closest && e.target.closest("textarea,input")) return;
     if (e.key === "Escape") { if (!$("#sheet").hidden) closeSheet(); else if (overview) toggleOverview(); return; }

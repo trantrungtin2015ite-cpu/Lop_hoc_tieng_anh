@@ -17,7 +17,7 @@ Bài giảng Toán bằng tiếng Anh, có tiếng Việt đi kèm. Học sinh m
 - **Chuyển phần:** nút mũi tên, chấm tiến độ, phím mũi tên trái phải, hoặc vuốt ngang. Nút lưới để xem toàn bài.
 - **EN / EN + VI / VI:** chọn hiện tiếng Anh, song ngữ hoặc tiếng Việt.
 - **Chạm vào từ tiếng Anh:** hiện nghĩa. Từ có trong bảng thuật ngữ của bài (gạch chân) lấy nghĩa đã duyệt; từ khác dùng dịch máy. Nút "Xem cả câu" hiện bản tiếng Việt của cả câu.
-- **Kéo chọn một đoạn** (điện thoại: nhấn giữ rồi kéo hai đầu): hiện nút "Dịch đoạn này", kèm thuật ngữ có trong đoạn và bản tiếng Việt của cả câu.
+- **Nhấn giữ một từ rồi kéo** sang các từ khác (máy tính: nhấn chuột rồi kéo): app tô vàng đoạn chọn và hiện nút "Dịch đoạn này" phía trên thanh dưới cùng. App tự chọn chữ nên menu sao chép và Google Dịch của điện thoại không bật lên. Chọn gần trọn câu thì dùng bản tiếng Việt đã duyệt trong bài.
 - **Nút Việt → Anh:** học sinh gõ tiếng Việt để dịch sang tiếng Anh, không giới hạn số lần.
 - **Phần cuối "Từ vựng của em":** các từ em đã tra, câu đã dịch, kết quả câu hỏi. Lưu trên máy của em.
 
