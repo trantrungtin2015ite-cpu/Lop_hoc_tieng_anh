@@ -1,45 +1,50 @@
-# Lớp học tiếng Anh
+# Lớp học song ngữ
 
-Web hỗ trợ giáo viên tập dạy bằng tiếng Anh. Bản hiện tại gồm phần khảo sát dạng tiết học tương tác: cảnh 1 (chào lớp) và cảnh 2 (giảng trên bảng).
+Bài giảng Toán bằng tiếng Anh, có tiếng Việt đi kèm. Học sinh mở trên điện thoại hoặc iPad, chạm vào từ tiếng Anh để xem nghĩa.
+
+## Các trang
+
+| Địa chỉ | Nội dung |
+| --- | --- |
+| `/` | Trang chủ: danh sách bài giảng |
+| `/lesson.html?bai=don-dieu` | Bài Tính đơn điệu của hàm số (học sinh) |
+| `/lesson.html?bai=don-dieu&gv` | Cùng bài, chế độ giáo viên: thêm nút mã QR mời học sinh |
+| `/khao-sat/` | Bản thử khảo sát tập dạy bằng tiếng Anh (cảnh 1 và 2) |
+
+## Bài giảng hoạt động thế nào
+
+- **Máy chiếu, máy tính, iPad xoay ngang:** các phần nằm trên một mặt phẳng lớn, chuyển phần thì màn hình phóng và lia tới (kiểu Prezi). Nút lưới để xem toàn bài. Phím mũi tên trái, phải để chuyển.
+- **Điện thoại:** mỗi phần là một thẻ, vuốt lên xuống.
+- **EN / EN + VI / VI:** chọn hiện tiếng Anh, song ngữ hoặc tiếng Việt.
+- **Chạm vào từ tiếng Anh:** hiện nghĩa. Từ có trong bảng thuật ngữ của bài (gạch chân chấm) lấy nghĩa đã duyệt; từ khác dùng dịch máy.
+- **Nút Việt → Anh:** học sinh gõ tiếng Việt để dịch sang tiếng Anh, không giới hạn số lần.
+- **Phần cuối "Từ vựng của em":** các từ em đã tra, câu đã dịch, kết quả câu hỏi. Lưu trên máy của em.
+
+## Sửa nội dung bài
+
+Toàn bộ chữ của bài nằm trong `js/lesson/data-don-dieu.js`:
+
+- `glossary`: bảng thuật ngữ Anh – Việt.
+- `slides`: các phần của bài. Mỗi đoạn có `en` và `vi`. Công thức viết giữa hai dấu `$...$` theo cú pháp LaTeX.
+
+## Cấu trúc mã
+
+| Tệp | Việc |
+| --- | --- |
+| `lesson.html`, `css/lesson.css` | Khung và giao diện bài giảng |
+| `js/lesson/app.js` | Trình chiếu, chuyển phần, chạm từ, khung dịch, câu hỏi, thống kê cuối bài |
+| `js/lesson/words.js` | Tách từ để chạm, hiển thị công thức, tra nghĩa, dịch |
+| `js/lesson/stats.js` | Ghi lại từ học sinh đã tra |
+| `js/lesson/board.js`, `pack-mono.js` | Đồ thị tương tác ở phần khởi động |
+
+## Giới hạn hiện tại
+
+- Dịch máy dùng dịch vụ miễn phí MyMemory, chất lượng chưa bằng bảng thuật ngữ và có giới hạn lượt mỗi ngày.
+- Thống kê chỉ nằm trên máy từng học sinh; gửi về máy giáo viên là bước tiếp theo (cần máy chủ).
+- Máy giáo viên chuyển phần chưa kéo máy học sinh chuyển theo.
 
 ## Chạy thử trên máy
-
-Trang dùng JavaScript dạng module nên phải mở qua một máy chủ nhỏ, không mở thẳng tệp `index.html`:
 
 ```
 npx serve .
 ```
-
-Rồi mở địa chỉ hiện ra (thường là `http://localhost:3000`) bằng Chrome. Micro chỉ hoạt động trên `localhost` hoặc trang `https`.
-
-## Đưa lên mạng bằng Vercel
-
-1. Đăng nhập vercel.com bằng tài khoản GitHub.
-2. Bấm **Add New → Project**, chọn kho `lop-hoc-tieng-anh`, bấm **Deploy**. Không cần chỉnh cài đặt gì.
-3. Vercel cho một đường link `https://...vercel.app`. Mỗi lần có code mới trên GitHub, trang tự cập nhật.
-
-## Cấu trúc
-
-| Tệp | Nội dung |
-| --- | --- |
-| `index.html` | Khung trang |
-| `css/style.css` | Màu sắc, chữ, bố cục |
-| `js/app.js` | Các màn hình và luồng đi: màn đầu, cảnh 1, chọn bài, hướng dẫn, cảnh 2, tổng kết |
-| `js/content.js` | Nội dung: phương án cảnh 1, bốn gói bài (hình trên bảng, nhãn, lời hướng dẫn, câu mẫu) |
-| `js/i18n.js` | Chữ trên giao diện, tiếng Việt và tiếng Anh |
-| `js/voice.js` | Micro luôn mở, tự nhận biết nói xong, ghi lại giọng để phát lại, giọng đọc mẫu |
-| `js/board.js` | Bảng tương tác: lướt theo đồ thị, chạm điểm, kéo thả nhãn |
-| `js/classroom.js` | Hình lớp học và phản ứng của học sinh |
-| `js/evaluate.js` | Chấm câu nói (hiện dùng quy tắc, chưa dùng AI) |
-
-## Chỉnh nhanh
-
-- **Thời gian im lặng để coi là nói xong:** `SILENCE_MS` trong `js/voice.js` (mặc định 1800 mili giây).
-- **Thêm hoặc sửa bài:** thêm một phần tử vào `PACKS` trong `js/content.js`.
-- **Sửa chữ trên giao diện:** `js/i18n.js`.
-
-## Giới hạn hiện tại
-
-- Nghe liên tục chạy tốt nhất trên Chrome (Android và máy tính). Trình duyệt không hỗ trợ sẽ chuyển sang gõ chữ.
-- Máy nghe theo tiếng Anh, nên câu nói tiếng Việt có thể bị ghi sai chữ.
-- Chưa có AI chấm câu, chưa lưu kết quả lên máy chủ.

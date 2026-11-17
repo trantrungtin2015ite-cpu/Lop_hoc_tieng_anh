@@ -3,15 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#1f6b52">
-<title>Lớp học tiếng Anh</title>
+<meta name="theme-color" content="#F4F5F8">
+<title>Lớp học song ngữ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Noto+Serif:wght@600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: a short intro, then one card per lesson; teacher tools below */
+  --bg:#F4F5F8;--surface:#FFFFFF;--ink:#111827;--muted:#5C6474;--line:#E2E5EC;--accent:#2F5BEA;--accent-ink:#fff;--accent-soft:#E9EEFF;
+  --display:"Lexend","Be Vietnam Pro",system-ui,sans-serif;--body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --shadow:0 1px 2px rgba(17,24,39,.06),0 8px 28px rgba(17,24,39,.08);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1117;--surface:#171B24;--ink:#ECEFF4;--muted:#9AA3B2;--line:#283041;--accent:#7C9BFF;--accent-ink:#0E1117;--accent-soft:#1D2640;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1117;--surface:#171B24;--ink:#ECEFF4;--muted:#9AA3B2;--line:#283041;--accent:#7C9BFF;--accent-ink:#0E1117;--accent-soft:#1D2640;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.55}
+main{max-width:880px;margin:0 auto;padding:40px 20px 64px;display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.15;margin:0;text-wrap:balance}
+.lead{margin:10px 0 0;color:var(--muted);font-size:17px;max-width:60ch}
+h2{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.04em;color:var(--muted);margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.card{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit}
+.card .tag{align-self:flex-start;font-size:12.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:3px 10px}
+.card h3{margin:0;font-family:var(--display);font-weight:600;font-size:22px;line-height:1.25}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.card .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:10px 14px;font-weight:600;font-size:15px;text-decoration:none}
+.btn.pri{background:var(--accent);color:var(--accent-ink)}
+.btn.sec{border:1px solid var(--line);color:var(--ink)}
+.card.soon{box-shadow:none;border:1.5px dashed var(--line);background:transparent}
+a:focus-visible{outline:2.5px solid var(--accent);outline-offset:3px}
+</style>
 </head>
 <body>
-<main id="app"><p>Đang tải…</p></main>
-<noscript>Trang cần bật JavaScript.</noscript>
-<script type="module" src="js/app.js"></script>
+<main>
+  <header>
+    <h1>Lớp học song ngữ</h1>
+    <p class="lead">Bài giảng Toán bằng tiếng Anh, có tiếng Việt đi kèm. Học sinh mở trên điện thoại hoặc iPad, chạm vào từ chưa biết để xem nghĩa.</p>
+  </header>
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <h2>Bài giảng</h2>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">Toán 12</span>
+        <h3>Tính đơn điệu của hàm số</h3>
+        <p>Monotonicity of functions · 10 phần, có đồ thị tương tác, bảng biến thiên và câu hỏi nhanh.</p>
+        <div class="acts"><a class="btn pri" href="lesson.html?bai=don-dieu">Vào bài</a><a class="btn sec" href="lesson.html?bai=don-dieu&amp;gv">Trình chiếu (giáo viên)</a></div>
+      </div>
+      <div class="card soon">
+        <span class="tag">Sắp có</span>
+        <h3>Cực trị, hàm số bậc hai, tiệm cận</h3>
+        <p>Các bài tiếp theo dùng chung khung này.</p>
+      </div>
+    </div>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <h2>Dành cho giáo viên</h2>
+    <div class="grid">
+      <a class="card" href="khao-sat/">
+        <span class="tag">Bản thử</span>
+        <h3>Tập dạy bằng tiếng Anh</h3>
+        <p>Khảo sát dạng tiết học: chào lớp, giảng trên bảng, luyện nói với micro luôn mở.</p>
+      </a>
+    </div>
+  </section>
+</main>
 </body>
 </html>
