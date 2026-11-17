@@ -84,7 +84,7 @@ async function machine(text, pair) {
 // English word or phrase → Vietnamese.
 export async function meaningOf(word) {
   const g = glossFor(word);
-  if (g) return { vi: g.vi, ex: g.ex, key: g.en, source: "gloss" };
+  if (g) return { vi: g.vi, ex: g.ex, key: g.en, source: "gloss", g };
   const vi = await machine(word, "en|vi");
   return { vi, ex: null, key: word.toLowerCase(), source: vi ? "machine" : "none" };
 }
@@ -96,4 +96,23 @@ export async function toEnglish(text) {
   if (g) return { en: g.en, source: "gloss" };
   const en = await machine(t, "vi|en");
   return { en, source: en ? "machine" : "none" };
+}
+
+/* ---------- pronunciation: stress, phonetics, approximate Vietnamese reading ---------- */
+const isCaps = (x) => /\p{L}/u.test(x) && x === x.toUpperCase() && x !== x.toLowerCase();
+// "in·CREAS·ing" → syllables with the stressed one marked.
+export function stressHTML(st) {
+  return st.split(" ").map((word) => word.split(/([·-])/).map((p) => {
+    if (p === "·") return '<span class="dot">·</span>';
+    if (p === "-") return '<span class="dot">-</span>';
+    return isCaps(p) ? '<b class="str">' + esc(p.toLowerCase()) + "</b>" : '<span class="syl">' + esc(p) + "</span>";
+  }).join("")).join('<span class="gap"></span>');
+}
+// "đâu-MÂY-n" → stressed part in capitals; a piece with no vowel is a final sound to keep, shown small.
+const VOWEL = /[aăâeêioôơuưyáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]/i;
+export function boiHTML(b) {
+  return b.split(" ").map((word) => word.split("-").map((p) => {
+    if (!VOWEL.test(p)) return '<span class="fin">' + esc(p) + "</span>";
+    return isCaps(p) ? '<b class="str">' + esc(p) + "</b>" : "<span>" + esc(p) + "</span>";
+  }).join('<span class="dot">-</span>')).join('<span class="gap"></span>');
 }

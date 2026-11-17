@@ -18,6 +18,8 @@ Bài giảng Toán bằng tiếng Anh, có tiếng Việt đi kèm. Học sinh m
 - **EN / EN + VI / VI:** chọn hiện tiếng Anh, song ngữ hoặc tiếng Việt.
 - **Chạm vào từ tiếng Anh:** hiện nghĩa. Từ có trong bảng thuật ngữ của bài (gạch chân) lấy nghĩa đã duyệt; từ khác dùng dịch máy. Nút "Xem cả câu" hiện bản tiếng Việt của cả câu.
 - **Nhấn giữ một từ rồi kéo** sang các từ khác (máy tính: nhấn chuột rồi kéo): app tô vàng đoạn chọn và hiện nút "Dịch đoạn này" phía trên thanh dưới cùng. App tự chọn chữ nên menu sao chép và Google Dịch của điện thoại không bật lên. Chọn gần trọn câu thì dùng bản tiếng Việt đã duyệt trong bài.
+- **Phát âm:** khung nghĩa của từ trong bảng thuật ngữ có trọng âm (âm tiết nhấn tô đỏ), phiên âm, cách đọc gần đúng kiểu Việt (tắt được), mẹo cho âm khó, nút đọc chậm.
+- **Tốc độ đọc:** nút đồng hồ ở thanh trên (0,6× / 0,8× / 1×), hoặc ba nút Chậm, Vừa, Bình thường trong khung nghĩa. Máy nhớ lựa chọn.
 - **Nút Việt → Anh:** học sinh gõ tiếng Việt để dịch sang tiếng Anh, không giới hạn số lần.
 - **Phần cuối "Từ vựng của em":** các từ em đã tra, câu đã dịch, kết quả câu hỏi. Lưu trên máy của em.
 
@@ -25,7 +27,7 @@ Bài giảng Toán bằng tiếng Anh, có tiếng Việt đi kèm. Học sinh m
 
 Toàn bộ chữ của bài nằm trong `js/lesson/data-don-dieu.js`:
 
-- `glossary`: bảng thuật ngữ Anh – Việt.
+- `glossary`: bảng thuật ngữ Anh – Việt. Mỗi từ có thể có `st` (trọng âm, âm tiết nhấn viết HOA), `ipa` (phiên âm), `boi` (cách đọc gần đúng), `tip` (mẹo phát âm).
 - `slides`: các phần của bài. Mỗi đoạn có `en` và `vi`. Công thức viết giữa hai dấu `$...$` theo cú pháp LaTeX.
 
 ## Cấu trúc mã
