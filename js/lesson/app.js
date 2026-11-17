@@ -23,6 +23,9 @@ let cur = 0, overview = false, shape = "", FR = { w: 1280, h: 720 }, POS = [], c
 
 // Interface wording follows the language switch: English only in EN mode, otherwise Vietnamese.
 const L = (vi, en) => (lang === "en" ? en : vi);
+// Translation sheets follow the direction of translation, not the mode switch:
+// English → Vietnamese sheets are fully Vietnamese, Vietnamese → English is fully English.
+const VI = (vi) => vi, EN = (vi, en) => en;
 
 /* ---------- icons ---------- */
 const I = {
@@ -212,9 +215,9 @@ function setLang(l) {
 
 /* ---------- sheet ---------- */
 let sheetFor = null;
-function openSheet(html, anchor) {
+function openSheet(html, anchor, t = L) {
   const sh = $("#sheet");
-  sh.innerHTML = '<button type="button" class="ic close" id="shClose" aria-label="Đóng">' + I.close + "</button>" + html;
+  sh.innerHTML = '<button type="button" class="ic close" id="shClose" aria-label="' + t("Đóng", "Close") + '">' + I.close + "</button>" + html;
   sh.hidden = false; $("#scrim").hidden = false;
   const pop = !!anchor && window.innerWidth >= 860;
   sh.classList.toggle("pop", pop);
@@ -230,24 +233,24 @@ function openSheet(html, anchor) {
 }
 function closeSheet() { $("#sheet").hidden = true; $("#scrim").hidden = true; $$(".w.act").forEach((w) => w.classList.remove("act")); sheetFor = null; }
 // Stress, phonetics and the approximate Vietnamese reading of a glossary term.
-function pronHTML(g) {
+function pronHTML(g, t = VI) {
   if (!g || !g.st) return "";
-  let h = '<div class="pron"><div class="pr-row"><span class="lbl">' + L("Trọng âm", "Stress") + '</span><span class="st">' + stressHTML(g.st) + "</span></div>" +
-    '<div class="pr-row"><span class="lbl">' + L("Phiên âm", "IPA") + '</span><span class="ipa">' + esc(g.ipa || "") + "</span></div>";
+  let h = '<div class="pron"><div class="pr-row"><span class="lbl">' + t("Trọng âm", "Stress") + '</span><span class="st">' + stressHTML(g.st) + "</span></div>" +
+    '<div class="pr-row"><span class="lbl">' + t("Phiên âm", "IPA") + '</span><span class="ipa">' + esc(g.ipa || "") + "</span></div>";
   if (g.boi && showBoi()) {
-    h += '<div class="pr-row boi"><span class="lbl">' + L("Đọc gần đúng", "Approx.") + '</span><span class="bo">' + boiHTML(g.boi) + "</span></div>";
+    h += '<div class="pr-row boi"><span class="lbl">' + t("Đọc gần đúng", "Approx.") + '</span><span class="bo">' + boiHTML(g.boi) + "</span></div>";
     if (g.tip) h += '<p class="tip">' + esc(g.tip) + "</p>";
-    h += '<p class="note-s">' + L("Cách đọc gần đúng chỉ để bắt đầu: nghe giọng mẫu để đọc cho chuẩn, nhớ giữ âm cuối viết nhỏ.", "The approximate reading is only a start: listen to the model and keep the small final sounds.") + "</p>";
+    h += '<p class="note-s">' + t("Cách đọc gần đúng chỉ để bắt đầu: nghe giọng mẫu để đọc cho chuẩn, nhớ giữ âm cuối viết nhỏ.", "The approximate reading is only a start: listen to the model and keep the small final sounds.") + "</p>";
   }
-  h += '<div class="pr-acts"><button type="button" class="link" id="slowBtn">' + L("Đọc chậm", "Say slowly") + "</button>" +
-    (g.boi ? '<button type="button" class="link" id="boiBtn">' + (showBoi() ? L("Ẩn cách đọc gần đúng", "Hide approximate reading") : L("Hiện cách đọc gần đúng", "Show approximate reading")) + "</button>" : "") + "</div></div>";
+  h += '<div class="pr-acts"><button type="button" class="link" id="slowBtn">' + t("Đọc chậm", "Say slowly") + "</button>" +
+    (g.boi ? '<button type="button" class="link" id="boiBtn">' + (showBoi() ? t("Ẩn cách đọc gần đúng", "Hide approximate reading") : t("Hiện cách đọc gần đúng", "Show approximate reading")) + "</button>" : "") + "</div></div>";
   return h;
 }
 function bindPron(g, word, rerender) {
   const sb = $("#slowBtn"); if (sb) sb.onclick = () => speakEn(word, 0.5);
   const bb = $("#boiBtn"); if (bb) bb.onclick = () => { setBoi(!showBoi()); rerender(); };
 }
-const SRC = (s) => '<span class="src">' + (s === "gloss" ? "Theo bảng thuật ngữ của bài" : "Dịch máy, có thể chưa chuẩn") + "</span>";
+const SRC = (s, t = VI) => '<span class="src">' + (s === "gloss" ? t("Theo bảng thuật ngữ của bài", "From the lesson glossary") : t("Dịch máy, có thể chưa chuẩn", "Machine translation, may not be exact")) + "</span>";
 
 // The lesson's own Vietnamese for the sentence a word or selection belongs to.
 function pairOf(node) {
@@ -265,7 +268,7 @@ async function showWord(el) {
   $$(".w.act").forEach((w) => w.classList.remove("act")); el.classList.add("act");
   sheetFor = word;
   openSheet('<div class="wd"><div class="wd-top"><span class="wd-w">' + esc(word) + '</span><button type="button" class="spk" id="wdSpk" aria-label="Nghe">' + I.speak + "</button></div>" +
-    '<p class="wd-vi" id="wdVi">Đang tra…</p>' + (pair ? '<button type="button" class="link" id="wholeBtn">Xem cả câu</button><div id="wholeBox"></div>' : "") + rateRow() + "</div>", el);
+    '<p class="wd-vi" id="wdVi">Đang tra…</p>' + (pair ? '<button type="button" class="link" id="wholeBtn">Xem cả câu</button><div id="wholeBox"></div>' : "") + rateRow(VI) + "</div>", el, VI);
   $("#wdSpk").onclick = () => speakEn(word);
   if (pair) $("#wholeBtn").onclick = () => { $("#wholeBox").innerHTML = wholeSentenceHTML(pair); $("#wholeBtn").remove(); };
   const m = await meaningOf(word);
@@ -275,7 +278,7 @@ async function showWord(el) {
   box.innerHTML = esc(m.vi) + (m.ex ? '<span class="ex">' + esc(m.ex) + "</span>" : "") + SRC(m.source);
   if (m.g && m.g.st) {
     const holder = document.createElement("div"); holder.id = "pronBox"; box.after(holder);
-    const draw = () => { holder.innerHTML = pronHTML(m.g); bindPron(m.g, word, draw); };
+    const draw = () => { holder.innerHTML = pronHTML(m.g, VI); bindPron(m.g, word, draw); };
     draw();
   }
   stats.lookup(m.key, word, m.vi);
@@ -319,7 +322,7 @@ async function showSelection() {
   openSheet('<div class="wd"><span class="lbl">Đoạn đã chọn</span><div class="wd-top"><span class="sel-en">' + esc(text) + '</span><button type="button" class="spk" id="selSpk" aria-label="Nghe">' + I.speak + "</button></div>" +
     (useLesson ? '<p class="wd-vi">' + pair.vi.innerHTML + '<span class="src">Bản tiếng Việt đã duyệt trong bài</span></p>' : '<p class="wd-vi" id="selVi">Đang dịch…</p>') +
     (uniq.length ? '<div class="terms"><span class="lbl">Thuật ngữ trong đoạn</span>' + uniq.map((g) => "<span><b>" + esc(g.en) + "</b> " + esc(g.vi) + "</span>").join("") + "</div>" : "") +
-    (pair && !useLesson ? wholeSentenceHTML(pair) : "") + rateRow() + "</div>", anchor);
+    (pair && !useLesson ? wholeSentenceHTML(pair) : "") + rateRow(VI) + "</div>", anchor, VI);
   clearSel();
   $("#selSpk").onclick = () => speakEn(text);
   if (useLesson) { stats.lookup(text.toLowerCase(), text, pair.vi.textContent.trim()); return; }
@@ -334,19 +337,19 @@ async function showSelection() {
 /* ---------- Vietnamese → English ---------- */
 function showTranslate() {
   const recent = stats.translations().slice(0, 5);
-  openSheet('<div class="trs"><h3>Dịch tiếng Việt sang tiếng Anh</h3>' +
-    '<textarea id="trIn" rows="2" placeholder="Ví dụ: đạo hàm bằng 0"></textarea>' +
-    '<button type="button" class="primary" id="trGo">Dịch</button><div id="trOut" class="tr-out" hidden></div>' + rateRow() +
-    (recent.length ? '<div class="tr-recent"><span class="lbl">Em đã tra</span>' + recent.map((r) => '<button type="button" class="rc" data-vi="' + esc(r.vi) + '"><span>' + esc(r.vi) + "</span><b>" + esc(r.en) + "</b></button>").join("") + "</div>" : "") + "</div>");
+  openSheet('<div class="trs"><h3>Vietnamese → English</h3>' +
+    '<textarea id="trIn" rows="2" placeholder="Type Vietnamese, e.g. đạo hàm bằng 0"></textarea>' +
+    '<button type="button" class="primary" id="trGo">Translate</button><div id="trOut" class="tr-out" hidden></div>' + rateRow(EN) +
+    (recent.length ? '<div class="tr-recent"><span class="lbl">Recent</span>' + recent.map((r) => '<button type="button" class="rc" data-vi="' + esc(r.vi) + '"><span>' + esc(r.vi) + "</span><b>" + esc(r.en) + "</b></button>").join("") + "</div>" : "") + "</div>", null, EN);
   const inp = $("#trIn"), out = $("#trOut");
   const run = async () => {
     const v = inp.value.trim();
     out.hidden = false;
-    if (!v) { out.innerHTML = '<p class="err">Nhập câu tiếng Việt trước đã.</p>'; return; }
-    out.innerHTML = '<p class="muted">Đang dịch…</p>';
+    if (!v) { out.innerHTML = '<p class="err">Type a Vietnamese sentence first.</p>'; return; }
+    out.innerHTML = '<p class="muted">Translating…</p>';
     const r = await toEnglish(v);
-    if (!r.en) { out.innerHTML = '<p class="err">Chưa dịch được. Kiểm tra mạng rồi thử lại.</p>'; return; }
-    out.innerHTML = '<div class="tr-res"><span>' + esc(r.en) + '</span><button type="button" class="spk" id="trSpk" aria-label="Nghe">' + I.speak + "</button></div>" + SRC(r.source);
+    if (!r.en) { out.innerHTML = '<p class="err">Could not translate. Check the connection and try again.</p>'; return; }
+    out.innerHTML = '<div class="tr-res"><span>' + esc(r.en) + '</span><button type="button" class="spk" id="trSpk" aria-label="Listen">' + I.speak + "</button></div>" + SRC(r.source, EN);
     $("#trSpk").onclick = () => speakEn(r.en);
     stats.translated(v, r.en);
   };
@@ -394,9 +397,10 @@ function capHint() { return L("Lướt ngón tay theo đồ thị, hoặc kéo n
 /* ---------- reading speed ---------- */
 const RATE_NAMES = { 0.6: ["Chậm", "Slow"], 0.8: ["Vừa", "Medium"], 1: ["Bình thường", "Normal"] };
 function showRate() { const t = $("#rateTxt"); if (t) t.textContent = String(S.rate).replace(".", lang === "en" ? "." : ",") + "×"; }
-function rateRow() {
-  return '<div class="rate-row"><span class="lbl">' + L("Tốc độ đọc", "Reading speed") + "</span>" +
-    RATES.map((r) => '<button type="button" data-r="' + r + '" aria-pressed="' + (r === S.rate) + '">' + RATE_NAMES[r][lang === "en" ? 1 : 0] + "</button>").join("") + "</div>";
+function rateRow(t = L) {
+  const en = t("", "x") === "x";
+  return '<div class="rate-row"><span class="lbl">' + t("Tốc độ đọc", "Reading speed") + "</span>" +
+    RATES.map((r) => '<button type="button" data-r="' + r + '" aria-pressed="' + (r === S.rate) + '">' + RATE_NAMES[r][en ? 1 : 0] + "</button>").join("") + "</div>";
 }
 function bindRateRow(root) {
   $$(".rate-row button", root).forEach((b) => { b.onclick = () => {
