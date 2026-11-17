@@ -13,10 +13,11 @@ Bài giảng Toán bằng tiếng Anh, có tiếng Việt đi kèm. Học sinh m
 
 ## Bài giảng hoạt động thế nào
 
-- **Máy chiếu, máy tính, iPad xoay ngang:** các phần nằm trên một mặt phẳng lớn, chuyển phần thì màn hình phóng và lia tới (kiểu Prezi). Nút lưới để xem toàn bài. Phím mũi tên trái, phải để chuyển.
-- **Điện thoại:** mỗi phần là một thẻ, vuốt lên xuống.
+- **Mọi thiết bị:** các phần nằm trên một mặt phẳng lớn; chuyển phần thì màn hình lùi ra thấy đường đi rồi phóng vào phần mới (kiểu Prezi). Màn hình ngang dùng khung ngang, điện thoại dùng khung dọc.
+- **Chuyển phần:** nút mũi tên, chấm tiến độ, phím mũi tên trái phải, hoặc vuốt ngang. Nút lưới để xem toàn bài.
 - **EN / EN + VI / VI:** chọn hiện tiếng Anh, song ngữ hoặc tiếng Việt.
-- **Chạm vào từ tiếng Anh:** hiện nghĩa. Từ có trong bảng thuật ngữ của bài (gạch chân chấm) lấy nghĩa đã duyệt; từ khác dùng dịch máy.
+- **Chạm vào từ tiếng Anh:** hiện nghĩa. Từ có trong bảng thuật ngữ của bài (gạch chân) lấy nghĩa đã duyệt; từ khác dùng dịch máy. Nút "Xem cả câu" hiện bản tiếng Việt của cả câu.
+- **Kéo chọn một đoạn** (điện thoại: nhấn giữ rồi kéo hai đầu): hiện nút "Dịch đoạn này", kèm thuật ngữ có trong đoạn và bản tiếng Việt của cả câu.
 - **Nút Việt → Anh:** học sinh gõ tiếng Việt để dịch sang tiếng Anh, không giới hạn số lần.
 - **Phần cuối "Từ vựng của em":** các từ em đã tra, câu đã dịch, kết quả câu hỏi. Lưu trên máy của em.
 

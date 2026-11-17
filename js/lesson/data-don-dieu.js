@@ -53,7 +53,7 @@ export default {
 
   slides: [
     {
-      id: "title", kind: "title",
+      id: "title", tone: "ink", kind: "title",
       title: { en: "Monotonicity of functions", vi: "Tính đơn điệu của hàm số" },
       blocks: [
         { type: "p", en: "Mathematics 12 · Bilingual lesson", vi: "Toán 12 · Bài học song ngữ" },
@@ -61,7 +61,7 @@ export default {
       ]
     },
     {
-      id: "warmup",
+      id: "warmup", tone: "amber",
       title: { en: "Warm-up", vi: "Khởi động" },
       blocks: [
         { type: "p", en: "Look at the graph. Where does it go up? Where does it go down?", vi: "Quan sát đồ thị. Đồ thị đi lên ở đâu? Đi xuống ở đâu?" },
@@ -69,7 +69,7 @@ export default {
       ]
     },
     {
-      id: "definition",
+      id: "definition", tone: "blue",
       title: { en: "Definition", vi: "Định nghĩa" },
       blocks: [
         { type: "p", en: "Let $y = f(x)$ be defined on $K$, where $K$ is an interval, a closed interval or a half-open interval.",
@@ -85,7 +85,7 @@ export default {
       ]
     },
     {
-      id: "check1",
+      id: "check1", tone: "amber",
       title: { en: "Quick check", vi: "Kiểm tra nhanh" },
       blocks: [
         { type: "quiz",
@@ -102,7 +102,7 @@ export default {
       ]
     },
     {
-      id: "theorem",
+      id: "theorem", tone: "violet",
       title: { en: "Theorem", vi: "Định lí" },
       blocks: [
         { type: "p", en: "Let $y = f(x)$ be differentiable on $K$.", vi: "Cho hàm số $y = f(x)$ có đạo hàm trên $K$." },
@@ -117,7 +117,7 @@ export default {
       ]
     },
     {
-      id: "method",
+      id: "method", tone: "teal",
       title: { en: "Method", vi: "Phương pháp" },
       blocks: [
         { type: "steps", items: [
@@ -130,7 +130,7 @@ export default {
       ]
     },
     {
-      id: "example",
+      id: "example", tone: "teal",
       title: { en: "Example", vi: "Ví dụ" },
       blocks: [
         { type: "p", en: "Find the intervals of monotonicity of $y = x^3 - 3x$.", vi: "Xét tính đơn điệu của hàm số $y = x^3 - 3x$." },
@@ -144,7 +144,7 @@ export default {
       ]
     },
     {
-      id: "check2",
+      id: "check2", tone: "amber",
       title: { en: "Practice", vi: "Luyện tập" },
       blocks: [
         { type: "quiz",
@@ -159,7 +159,7 @@ export default {
       ]
     },
     {
-      id: "say",
+      id: "say", tone: "coral",
       title: { en: "Say it in English", vi: "Nói bằng tiếng Anh" },
       blocks: [
         { type: "say", items: [
@@ -171,7 +171,7 @@ export default {
       ]
     },
     {
-      id: "summary", kind: "summary",
+      id: "summary", tone: "blue", kind: "summary",
       title: { en: "Your words", vi: "Từ vựng của em" },
       blocks: [{ type: "mystats" }]
     }
